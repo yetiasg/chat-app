@@ -1,0 +1,39 @@
+import { createRouter, createWebHistory } from 'vue-router';
+
+import TheChat from './pages/TheChat';
+import TheAuth from './pages/TheAuth';
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    {
+      path: '/',
+      name: 'rootRoute',
+      component: TheChat,
+      meta: { requireAuth: true },
+    },
+    {
+      path: '/auth',
+      name: 'authRoute',
+      component: TheAuth,
+      meta: { requireUnAuth: true },
+    },
+  ],
+});
+
+router.beforeEach((to, from, next) => {
+  // const token = localStorage.getItem('token');
+  let token = 'aaa';
+  const routeAuthCheck = !!token;
+
+  if (to.matched.some((record) => record.meta.requireAuth)) {
+    if (routeAuthCheck) next();
+    else next('/auth');
+  }
+  if (to.matched.some((record) => record.meta.requireUnAuth)) {
+    if (routeAuthCheck) next('/');
+    else next();
+  }
+});
+
+export default router;
