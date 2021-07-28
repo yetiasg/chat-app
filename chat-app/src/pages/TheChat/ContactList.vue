@@ -2,7 +2,7 @@
   <div>
     <p class="contactLabel">Contacts</p>
     <ul>
-      <li v-for="(user, i) of users" :key="i">
+      <li v-for="(user, i) of getUsers" :key="i">
         <div class="userInContacts">
           <p>{{ user.name }}</p>
           <p>{{ user.lastMessage }}</p>
@@ -15,17 +15,12 @@
 <script>
 export default {
   data() {
-    return {
-      users: [
-        { name: 'Iwo Dindas', lastMessage: 'Jakaś ostatnia wiadomość...' },
-        { name: 'Michał Siewiec', lastMessage: 'Jakaś ostatnia wiadomość...' },
-        {
-          name: 'Mirosław Wierzbicki',
-          lastMessage: 'Jakaś ostatnia wiadomość...',
-        },
-        { name: 'Piotr Baloń', lastMessage: 'Jakaś ostatnia wiadomość...' },
-      ],
-    };
+    return {};
+  },
+  computed: {
+    getUsers() {
+      return this.$store.getters.getUsersList;
+    },
   },
 };
 </script>

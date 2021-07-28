@@ -22,8 +22,8 @@ export default {
   },
   methods: {
     findUser() {
-      if (!this.email.includes('@') || this.email.length <= 0) return;
-      console.log(this.email);
+      if (!this.email.includes('@') || this.email === '') return;
+      this.$store.dispatch('findUser', { email: this.email });
     },
   },
 };
