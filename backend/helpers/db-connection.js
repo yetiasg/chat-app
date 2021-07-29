@@ -1,11 +1,12 @@
-const { MongoClient, ObjectId } = require('mongodb');
 const createError = require('http-errors');
+const config = require('../config.json');
+const { MongoClient } = require('mongodb');
 
 let _db;
 
 const initDB = async (callback) => {
   if (_db) callback(null, _db);
-  const client = new MongoClient(process.env.MONGO_URL, {
+  const client = new MongoClient(config.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
@@ -19,7 +20,7 @@ const initDB = async (callback) => {
 };
 
 const getDB = () => {
-  if (!_db) createError.InternalServerError('Db not connected');
+  if (!_db) createError.InternalServerError('Db not initialized');
   return _db;
 };
 
