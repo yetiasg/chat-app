@@ -24,8 +24,12 @@ export default {
       message: 'Contact box',
     };
   },
-  methods: {},
-  computed: {},
+  methods: {
+    logout(){
+      this.$store.dispatch('logout')
+      this.$router.replace('/auth')
+    }
+  }
 };
 </script>
 

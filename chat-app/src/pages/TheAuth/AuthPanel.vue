@@ -26,6 +26,7 @@
             type="text"
             name="firstName"
             v-model="firstName"
+            autocomplete="name"
           />
         </div>
         <div class="textInput" v-if="!loginMode">
@@ -35,6 +36,7 @@
             type="text"
             name="lastName"
             v-model="lastName"
+            autocomplete="lastname"
           />
         </div>
         <div class="textInput">
@@ -83,7 +85,7 @@ export default {
     return {
       loginMode: true,
       firstName: '',
-      lastname: '',
+      lastName: '',
       email: '',
       password: '',
       passwordRepeat: '',
@@ -109,7 +111,7 @@ export default {
       } else {
         if (
           this.firstName === '' ||
-          this.lastname === '' ||
+          this.lastName === '' ||
           !this.email.includes('@') ||
           this.password.length < 8 ||
           this.password !== this.passwordRepeat
@@ -119,7 +121,7 @@ export default {
         }
         actionPayload = {
           firstName: this.firstName,
-          lastname: this.lastname,
+          lastName: this.lastName,
           email: this.email,
           password: this.password,
           passwordRepeat: this.passwordRepeat,
@@ -131,7 +133,7 @@ export default {
         } else {
           await this.$store.dispatch('register', actionPayload);
         }
-        if (this.isLoggedIn) this.$router.replace('/beers');
+        if (this.isLoggedIn) this.$router.replace('/');
       } catch (error) {
         this.error = error;
       }

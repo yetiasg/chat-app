@@ -16,7 +16,7 @@ exports.login = async (req, res, next) => {
     if(!doMatch) throw createError.Unauthorized('Username/password not valid');
     const token = await signAccessToken(user._id);
     const refreshToken = await signRefreshToken(user._id);
-    res.status(200).json({token, refreshToken, id: user._id, expiresIn: config.TOKEN_EXPIRATION});
+    res.status(200).json({token, refreshToken, userId: user._id, expiresIn: config.TOKEN_EXPIRATION});
   }catch (error){
     next(error);
   }

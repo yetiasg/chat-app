@@ -1,9 +1,18 @@
 export default{
-
+  // Auth section
   getUserId(state){
-    return state.userId;
+    if(!state.userId || !state.token || !state.refreshToken) return state.userId
+    else return state.userId
+  },
+  getToken(state){
+      if(!state.userId || !state.token || !state.refreshToken) return null
+      else return state.token
+  },
+  isAuthenticated(state){
+      return state.isAuth
   },
 
+  // Chat section
   getUsersList: (state) => {
     return state.conversations;
   },
@@ -15,6 +24,5 @@ export default{
   getConversationById(state){
     const convId = state.selectedConversationId;
     return state.conversations.filter(conv => conv.conversationId.toString() === convId.toString());
-
   }
 }
