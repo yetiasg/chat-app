@@ -12,12 +12,13 @@
         </ul>
       </div>
       <div class="messageInput">
-        <input
+        <form @submit.prevent>
+          <input
           type="text"
           name="message"
           v-model="message"
-          placeholder="Type some message"
-        />
+          placeholder="Type some message"/>
+        </form>
         <base-button mode="submitMessage" @click="submitMessage"
           >Send</base-button
         >
@@ -30,8 +31,7 @@
 export default {
   data() {
     return {
-      message: '',
-      messages: '',
+      message: ''
     };
   },
 
@@ -97,6 +97,14 @@ export default {
   width: 100%;
   height: 4rem;
   color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+form{
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
