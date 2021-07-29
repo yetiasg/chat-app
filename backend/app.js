@@ -1,10 +1,10 @@
 const createError = require('http-errors');
 const morgan = require('morgan');
 const express = require('express');
-require('dotenv').config();
 const config = require('./config.json');
 
 const { initDB } = require('./helpers/db-connection');
+const authRoutes = require('./router/auth');
 
 // const helmet = require('helmet');
 
@@ -14,17 +14,17 @@ app.use(morgan('dev'));
 // app.use(helmet());
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Conreol-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATH, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
 
-const authRoutes = require('./router/auth');
 
 app.use('/auth', authRoutes);
 
 app.use(async (req, res, next) => {
+  res.status(404).json('This route does not exist');
   next(createError.NotFound('This route does not exist'));
 });
 

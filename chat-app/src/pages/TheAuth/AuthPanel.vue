@@ -2,24 +2,42 @@
   <base-badge>
     <div class="container">
       <form @submit.prevent="submitForm">
-        <p v-if="!formIsValid">nieprawidlowe dane</p>
+        <p v-if="!formIsValid">Invalid data</p>
         <div class="optionsBtn">
           <base-button
             @click.prevent
             @focus.prevent="changeLoginMode"
             :mode="loginMode ? 'filledBtn' : 'borderBtn'"
             :disabled="loginMode"
-            >Logowanie</base-button
+            >Sign In</base-button
           >
           <base-button
             @click.prevent
             @focus.prevent="changeLoginMode"
             :mode="loginMode ? 'borderBtn' : 'filledBtn'"
             :disabled="!loginMode"
-            >Rejestracja</base-button
+            >Sign Up</base-button
           >
         </div>
-        <div class="loginInput">
+        <div class="textInput" v-if="!loginMode">
+          <label for="firstName">first name</label>
+          <input
+            @keydown.enter="submitForm"
+            type="text"
+            name="firstName"
+            v-model="firstName"
+          />
+        </div>
+        <div class="textInput" v-if="!loginMode">
+          <label for="lastName">last name</label>
+          <input
+            @keydown.enter="submitForm"
+            type="text"
+            name="lastName"
+            v-model="lastName"
+          />
+        </div>
+        <div class="textInput">
           <label for="email">email</label>
           <input
             @keydown.enter="submitForm"
@@ -30,7 +48,7 @@
           />
         </div>
         <div class="passwordInput">
-          <label for="password">hasło</label>
+          <label for="password">password</label>
           <input
             @keydown.enter="submitForm"
             type="password"
@@ -41,7 +59,7 @@
           />
         </div>
         <div class="passwordRepeatInput" v-if="!loginMode">
-          <label for="passwordRepeat">powtórz hasło</label>
+          <label for="passwordRepeat">repeat password</label>
           <input
             @keydown.enter="submitForm"
             type="password"
@@ -64,6 +82,8 @@ export default {
   data() {
     return {
       loginMode: true,
+      firstName: '',
+      lastname: '',
       email: '',
       password: '',
       passwordRepeat: '',
@@ -88,6 +108,8 @@ export default {
         };
       } else {
         if (
+          this.firstName === '' ||
+          this.lastname === '' ||
           !this.email.includes('@') ||
           this.password.length < 8 ||
           this.password !== this.passwordRepeat
@@ -96,13 +118,14 @@ export default {
           return;
         }
         actionPayload = {
+          firstName: this.firstName,
+          lastname: this.lastname,
           email: this.email,
           password: this.password,
           passwordRepeat: this.passwordRepeat,
         };
       }
       try {
-        console.log(actionPayload);
         if (this.loginMode) {
           await this.$store.dispatch('login', actionPayload);
         } else {
@@ -111,7 +134,6 @@ export default {
         if (this.isLoggedIn) this.$router.replace('/beers');
       } catch (error) {
         this.error = error;
-        console.log(error);
       }
     },
   },
@@ -143,7 +165,7 @@ form p {
   align-items: stretch;
 }
 
-.loginInput,
+.textInput,
 .passwordInput,
 .passwordRepeatInput {
   display: flex;
@@ -153,7 +175,7 @@ form p {
   margin: 20px 10px 0 10px;
 }
 
-.loginInput label,
+.textInput label,
 .passwordInput label,
 .passwordRepeatInput label {
   position: relative;
@@ -161,7 +183,7 @@ form p {
   color: hsl(0, 0%, 69%);
 }
 
-.loginInput input,
+.textInput input,
 .passwordInput input,
 .passwordRepeatInput input {
   width: 100%;
@@ -175,7 +197,7 @@ form p {
   transition: 0.1s linear;
 }
 
-.loginInput input:focus,
+.textInput input:focus,
 .passwordInput input:focus,
 .passwordRepeatInput input:focus {
   border: 2px solid hsl(0, 0%, 28%);

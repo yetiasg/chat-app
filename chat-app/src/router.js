@@ -23,7 +23,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // const token = localStorage.getItem('token');
-  let token = 'aaa';
+  let token = 's';
   const routeAuthCheck = !!token;
 
   if (to.matched.some((record) => record.meta.requireAuth)) {

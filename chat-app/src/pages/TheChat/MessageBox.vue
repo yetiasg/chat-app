@@ -2,7 +2,14 @@
   <div class="container">
     <div class="messageBox">
       <div class="contactName">
-        <p>Iwo Dindas</p>
+        <p>{{getConversationData.userName}}</p>
+      </div>
+      <div class="output">
+        <ul>
+          <li v-for="msg of getConversationData.messages" :key="msg.date" :class="msg.userId === getUserId ? 'left' : 'right'">
+            <p>{{msg.message}}</p>
+          </li>
+        </ul>
       </div>
       <div class="messageInput">
         <input
@@ -24,14 +31,30 @@ export default {
   data() {
     return {
       message: '',
+      messages: '',
     };
   },
+
   methods: {
     submitMessage() {
       console.log(this.message);
       this.message = '';
     },
+    fetchConversationData(){
+      this.messages = this.getConversationData()
+    }
   },
+
+  computed:{
+    getConversationData(){
+      return this.$store.getters.getConversationById.length > 0 ? this.$store.getters.getConversationById[0] : '';
+    },
+
+    getUserId(){
+      return this.$store.getters.getUserId;
+    }
+  }
+
 };
 </script>
 
@@ -81,13 +104,63 @@ export default {
 
 .messageInput input {
   flex-grow: 1;
-  margin: 0.5rem 1.6rem;
+  margin: 1.5rem 1.6rem;
   border: none;
   border-radius: 10px;
   height: 2.5rem;
   background-color: #474747;
-  padding: 0 0 0 0.5rem;
+  padding: 0 0 0 0.8rem;
   color: white;
   outline: none;
+  font-size: 14px;
+}
+
+.output{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 1rem;
+}
+
+ul{
+  box-sizing: border-box;
+  width:100%;
+  display: flex;
+  flex-direction: column;
+}
+
+li{
+  list-style-type: none;
+  margin: 0.15rem;
+  display: flex;
+  align-items: center;
+}
+
+li.left{
+  justify-content: flex-start;
+}
+
+li.left p{
+  background-color: rebeccapurple;
+}
+
+li.right{
+  justify-content: flex-end;
+}
+
+li.right p{
+  /* border: 1px solid rebeccapurple; */
+  background-color:hsl(0, 0%, 22%)
+}
+
+li p{
+  padding:0.7rem 1rem;
+  border-radius: 15px;
+  word-wrap: break-word;
+  word-break: break-all;
+  font-size: 12px;
+  max-width: 15rem;
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div >
     <p class="contactLabel">Contacts</p>
-    <ul>
-      <li v-for="(user, i) of getUsers" :key="i">
-        <div class="userInContacts">
-          <p>{{ user.name }}</p>
-          <p>{{ user.lastMessage }}</p>
+    <ul> 
+      <li v-for="(conversation, i) of getConversationsList" :key="i" @click="selectConversation(conversation.conversationId)">
+        <div class="userInContacts"  :class="selectedId === conversation.conversationId ? 'userInContacts-selected' : ''">
+          <p>{{ conversation.userName }}</p>
+          <p>{{ conversation.lastMessage }}</p>
         </div>
       </li>
     </ul>
@@ -15,12 +15,21 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      selectedId: ''
+    };
+  },
+  methods: {
+    selectConversation(conversationId) {
+      this.selectedId = conversationId;
+      this.$store.dispatch('selectedConversationId', this.selectedId);
+    },
   },
   computed: {
-    getUsers() {
+    getConversationsList() {
       return this.$store.getters.getUsersList;
     },
+  
   },
 };
 </script>
@@ -38,6 +47,7 @@ export default {
   border-radius: 10px;
   padding: 0.5rem;
   box-shadow: 0 0 5px hsla(0, 0%, 0%, 0.3);
+  border: hsl(0, 0%, 10%)1px solid;
 }
 
 .userInContacts > p:first-child {
@@ -60,5 +70,14 @@ ul {
   margin: 0.7rem 0 -0.5rem 0.2rem;
   font-size: 14px;
   color: hsl(0, 0%, 55%);
+}
+
+.userInContacts-selected{
+  border: rgb(255, 255, 255) 1px solid;
+}
+
+
+.userInContacts:hover{
+  border: rgb(255, 255, 255) 1px solid;
 }
 </style>
