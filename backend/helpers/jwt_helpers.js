@@ -6,7 +6,7 @@ const signAccessToken = (userId) => {
   return new Promise((resolve, reject) => {
     const payload = { userId };
     const secret = config.ACCESS_TOKEN_SECRET;
-    const options = { expiresIn: `20s` };
+    const options = { expiresIn: `${config.TOKEN_EXPIRATION}h` };
     JWT.sign(payload, secret, options, (err, token) => {
       if (err) return reject(createError.InternalServerError());
       resolve(token);

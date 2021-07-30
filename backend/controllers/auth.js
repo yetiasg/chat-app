@@ -34,7 +34,7 @@ exports.register = async (req, res, next) => {
     let userId = newUser.insertedId;
     const token = await signAccessToken(userId);
     const refreshToken = await signRefreshToken(userId);
-    res.status(200).json({token, refreshToken, userId, name:`${user.firstName} ${user.lastName}`, expiresIn: config.TOKEN_EXPIRATION});
+    res.status(200).json({token, refreshToken, userId, name:`${firstName} ${lastName}`, expiresIn: config.TOKEN_EXPIRATION});
   }catch (error){
     if(error.isJoi === true) error.status = 422;
     next(error);

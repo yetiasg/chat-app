@@ -30,6 +30,10 @@ export default{
 
   getConversationById(state){
     const convId = state.selectedConversationId;
-    return state.conversations.filter(conv => conv.conversationId.toString() === convId.toString());
+    return state.conversations.filter(conv => conv.conversationId === convId.toString());
+  },
+
+  getCurrentMessages(state){
+    return state.currentMessages;
   }
 }

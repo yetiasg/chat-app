@@ -5,7 +5,6 @@ const getJSON = async (url, options) => {
   const response = await fetch(url, options);
   if (!response.ok) throw new Error('Not registered or nvalid data');
   const data = await response.json();
-  console.log(data)
   return data
 
 };
@@ -28,9 +27,8 @@ export default{
         })
       }
       const resData = await getJSON(`${config.BASE_URL}/auth/login`, options)
-      console.log(resData);
       const {token, refreshToken, userId, name} = resData;
-      let expiresIn = resData.expiresIn*1000
+      let expiresIn = resData.expiresIn*1000*60*60;
       const expirationDate = new Date().getTime() + expiresIn;
 
       const userPayload = {
@@ -47,6 +45,8 @@ export default{
       localStorage.setItem('userId', userId);
       localStorage.setItem('expiresIn', expirationDate);
 
+      context.dispatch('getConversationsList');
+
       timer = setTimeout(function(){
         context.dispatch('refreshAuth');
       }, expiresIn)
@@ -58,6 +58,7 @@ export default{
 
   register: async(context, payload) => {
     const {firstName, lastName, email, password, repeatPassword} = payload;
+
     try{
       const options ={
         method: 'POST',
@@ -73,9 +74,8 @@ export default{
         })
       }
       const resData = await getJSON(`${config.BASE_URL}/auth/register`, options);
-
       const {token, refreshToken, userId, name} = resData;
-      let expiresIn = resData.expiresIn*1000
+      let expiresIn = resData.expiresIn*1000*60*60;
       const expirationDate = new Date().getTime() + expiresIn;
 
       const userPayload = {
@@ -91,6 +91,8 @@ export default{
       localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('userId', userId);
       localStorage.setItem('expiresIn', expirationDate);
+
+      context.dispatch('getConversationsList');
       
       timer = setTimeout(function(){
         context.dispatch('refreshAuth');
@@ -116,7 +118,7 @@ export default{
       const resData = await getJSON(`${config.BASE_URL}/auth/refresh`, options);
 
       const {token, refreshToken, userId} = resData;
-      let expiresIn = resData.expiresIn*1000
+      let expiresIn = resData.expiresIn*1000*60*60;
       const expirationDate = new Date().getTime() + expiresIn;
       
       const userPayload = {
@@ -132,6 +134,8 @@ export default{
       localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('userId', userId);
       localStorage.setItem('expiresIn', expirationDate);
+
+      context.dispatch('getConversationsList');
 
       timer = setTimeout(function(){
         context.dispatch('refreshAuth');
@@ -168,6 +172,7 @@ export default{
         expiresIn
       }
       context.commit('setUserData', userPayload)
+      context.dispatch('getConversationsList');
     }else{
       context.dispatch('logout')
       router.replace('/auth')
@@ -196,7 +201,7 @@ export default{
   // Chat section
   findUser: async (context, payload) => {
     this.state.response = {
-      data: await getJSON(`${config.BASE_URL}addContact`, payload),
+      data: await getJSON(`${config.BASE_URL}/addContact`, payload),
       context
     };
   },
@@ -204,5 +209,42 @@ export default{
   selectedConversationId(context, payload){
     context.commit('selectedConversationId', payload);
   },
+
+  getConversationsList: async(context) => {
+    try{
+      const userId = context.getters.getUserId;
+      const token = context.getters.getToken;
+      const options = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      }
+      const resData = await getJSON(`${config.BASE_URL}/conversations/${userId}`, options)
+      context.commit('saveConversations', resData)
+    }catch(error){
+      console.log(error)
+    }
+  },
+
+  getMessagesById: async(context, payload) =>{
+    try{
+      const token = context.getters.getToken;
+      const id = payload;
+      const options = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      }
+      context.commit('clearMessages')      
+      const resData = await getJSON(`${config.BASE_URL}/messagesById/${id}`, options)
+      context.commit('saveMessages', resData) 
+    }catch(error){
+      console.log(error)
+    }
+  }
 }
 

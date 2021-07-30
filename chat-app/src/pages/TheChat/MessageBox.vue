@@ -6,7 +6,7 @@
       </div>
       <div class="output">
         <ul>
-          <li v-for="msg of getConversationData.messages" :key="msg.date" :class="msg.userId === getUserId ? 'left' : 'right'">
+          <li v-for="msg of getMessages" :key="msg.date" :class="msg.userId === getUserId ? 'right' : 'left'">
             <p>{{msg.message}}</p>
           </li>
         </ul>
@@ -52,6 +52,9 @@ export default {
 
     getUserId(){
       return this.$store.getters.getUserId;
+    },
+    getMessages(){
+      return this.$store.getters.getCurrentMessages
     }
   }
 

@@ -23,6 +23,7 @@ export default {
     selectConversation(conversationId) {
       this.selectedId = conversationId;
       this.$store.dispatch('selectedConversationId', this.selectedId);
+      this.$store.dispatch('getMessagesById', this.selectedId)
     },
   },
   computed: {

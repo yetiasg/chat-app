@@ -25,4 +25,16 @@ export default{
   selectedConversationId(state, payload){
     state.selectedConversationId = payload;
   },
+
+  saveConversations(state, payload){
+    state.conversations = payload
+  },
+
+  saveMessages(state, payload){
+    state.currentMessages = payload
+  },
+
+  clearMessages(state){
+    state.currentMessages = ''
+  }
 }
