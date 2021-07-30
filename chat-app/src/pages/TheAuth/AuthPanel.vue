@@ -4,72 +4,29 @@
       <form @submit.prevent="submitForm">
         <p v-if="!formIsValid">Invalid data</p>
         <div class="optionsBtn">
-          <base-button
-            @click.prevent
-            @focus.prevent="changeLoginMode"
-            :mode="loginMode ? 'filledBtn' : 'borderBtn'"
-            :disabled="loginMode"
-            >Sign In</base-button
-          >
-          <base-button
-            @click.prevent
-            @focus.prevent="changeLoginMode"
-            :mode="loginMode ? 'borderBtn' : 'filledBtn'"
-            :disabled="!loginMode"
-            >Sign Up</base-button
-          >
+          <base-button @click.prevent @focus.prevent="changeLoginMode" :mode="loginMode ? 'filledBtn' : 'borderBtn'" :disabled="loginMode" >Sign In</base-button>
+          <base-button @click.prevent @focus.prevent="changeLoginMode" :mode="loginMode ? 'borderBtn' : 'filledBtn'" :disabled="!loginMode">Sign Up</base-button>
         </div>
         <div class="textInput" v-if="!loginMode">
           <label for="firstName">first name</label>
-          <input
-            @keydown.enter="submitForm"
-            type="text"
-            name="firstName"
-            v-model="firstName"
-            autocomplete="name"
-          />
+          <input @keydown.enter="submitForm" type="text" name="firstName" v-model="firstName" autocomplete="name"/>
         </div>
         <div class="textInput" v-if="!loginMode">
           <label for="lastName">last name</label>
-          <input
-            @keydown.enter="submitForm"
-            type="text"
-            name="lastName"
-            v-model="lastName"
-            autocomplete="lastname"
-          />
+          <input @keydown.enter="submitForm" type="text" name="lastName" v-model="lastName" autocomplete="lastname"/>
         </div>
         <div class="textInput">
           <label for="email">email</label>
-          <input
-            @keydown.enter="submitForm"
-            type="email"
-            name="email"
-            autocomplete="username"
-            v-model="email"
-          />
+          <input @keydown.enter="submitForm" type="email" name="email" autocomplete="username" v-model="email"/>
         </div>
         <div class="passwordInput">
           <label for="password">password</label>
-          <input
-            @keydown.enter="submitForm"
-            type="password"
-            name="password"
-            autocomplete="current-password"
-            v-model="password"
-            placeholder="*****"
-          />
+          <input @keydown.enter="submitForm"
+            type="password" name="password" autocomplete="current-password" v-model="password" placeholder="*****"/>
         </div>
         <div class="passwordRepeatInput" v-if="!loginMode">
-          <label for="passwordRepeat">repeat password</label>
-          <input
-            @keydown.enter="submitForm"
-            type="password"
-            name="passwordRepeat"
-            autocomplete="current-password"
-            v-model="passwordRepeat"
-            placeholder="*****"
-          />
+          <label for="repeatPassword">repeat password</label>
+          <input @keydown.enter="submitForm" type="password" name="repeatPassword" autocomplete="current-password" v-model="repeatPassword" placeholder="*****"/>
         </div>
         <div class="loginBtn">
           <base-button mode="filledBtn">{{ submitButtonCaption }}</base-button>
@@ -88,7 +45,7 @@ export default {
       lastName: '',
       email: '',
       password: '',
-      passwordRepeat: '',
+      repeatPassword: '',
       formIsValid: true,
       error: null,
     };
@@ -114,7 +71,7 @@ export default {
           this.lastName === '' ||
           !this.email.includes('@') ||
           this.password.length < 8 ||
-          this.password !== this.passwordRepeat
+          this.password !== this.repeatPassword
         ) {
           this.formIsValid = false;
           return;
@@ -124,7 +81,7 @@ export default {
           lastName: this.lastName,
           email: this.email,
           password: this.password,
-          passwordRepeat: this.passwordRepeat,
+          repeatPassword: this.repeatPassword,
         };
       }
       try {

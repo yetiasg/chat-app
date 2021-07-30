@@ -2,7 +2,7 @@
   <div class="container">
     <div class="contactBox">
       <div class="user">
-        <p>Mateusz Żupa</p>
+        <p>{{getUserName}}</p>
         <base-button mode="logoutBtn" @click="logout">Logout</base-button>
       </div>
       <add-contact></add-contact>
@@ -28,6 +28,11 @@ export default {
     logout(){
       this.$store.dispatch('logout')
       this.$router.replace('/auth')
+    }
+  },
+  computed: {
+    getUserName(){
+      return this.$store.getters.getName;
     }
   }
 };

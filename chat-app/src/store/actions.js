@@ -1,12 +1,19 @@
 import router from '../router.js';
+import config from '../config.js'
+
 const getJSON = async (url, options) => {
   const response = await fetch(url, options);
-  if (!response.ok) throw new Error();
-  return await response.json();
+  if (!response.ok) throw new Error('Not registered or nvalid data');
+  const data = await response.json();
+  console.log(data)
+  return data
+
 };
 
+let timer;
+
 export default{
-  // Auth section
+// Auth section
   login: async (context, payload) => {
     const {email, password} = payload;
     try{
@@ -20,25 +27,37 @@ export default{
           password: password
         })
       }
-      const resData = await getJSON('http://localhost:3000/auth/login', options)
+      const resData = await getJSON(`${config.BASE_URL}/auth/login`, options)
+      console.log(resData);
+      const {token, refreshToken, userId, name} = resData;
+      let expiresIn = resData.expiresIn*1000
+      const expirationDate = new Date().getTime() + expiresIn;
 
-      const {token, refreshToken, userId} = resData;
       const userPayload = {
-        token: token,
-        refreshToken: refreshToken,
-        userId: userId
+        name,
+        token,
+        refreshToken,
+        userId,
+        espiresIn: expirationDate
       }
       context.commit('setUserData', userPayload)
+      localStorage.setItem('name', name);
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('userId', userId);
+      localStorage.setItem('expiresIn', expirationDate);
+
+      timer = setTimeout(function(){
+        context.dispatch('refreshAuth');
+      }, expiresIn)
+
     }catch (error){
-      console.log(error)
+      router.replace('/auth')
     }
   },
 
-  async register(context, payload){
-    const {firstName, lastName, email, password, passwordRepeat} = payload;
+  register: async(context, payload) => {
+    const {firstName, lastName, email, password, repeatPassword} = payload;
     try{
       const options ={
         method: 'POST',
@@ -50,29 +69,40 @@ export default{
           lastName,
           email,
           password,
-          repeatPassword: passwordRepeat
+          repeatPassword: repeatPassword
         })
       }
-      const resData = await getJSON('http://localhost:3000/auth/register', options);
+      const resData = await getJSON(`${config.BASE_URL}/auth/register`, options);
 
-      const {token, refreshToken, userId} = resData;
+      const {token, refreshToken, userId, name} = resData;
+      let expiresIn = resData.expiresIn*1000
+      const expirationDate = new Date().getTime() + expiresIn;
+
       const userPayload = {
-        token: token,
-        refreshToken: refreshToken,
-        userId: userId
+        name,
+        token,
+        refreshToken,
+        userId,
+        expiresIn: expirationDate
       }
       context.commit('setUserData', userPayload)
-      localStorage.setItem('token', token)
-      localStorage.setItem('refreshToken', refreshToken)
-      localStorage.setItem('userId', userId)
+      localStorage.setItem('name', name);
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('expiresIn', expirationDate);
+      
+      timer = setTimeout(function(){
+        context.dispatch('refreshAuth');
+      }, expiresIn)
     }catch (error){
-      console.log(error.message)
+      router.replace('/auth')
     }
   },
 
-  async refreshAuth(context){
-    const refreshToken = localStorage.getItem('refreshToken')
-    if(refreshToken.length < 1) throw new Error('Unauthorized')
+  refreshAuth: async context => {
+    const refToken = localStorage.getItem('refreshToken')
+    if(refToken.length < 1) throw new Error('Unauthorized')
     try{
       const options = {
         method: 'POST',
@@ -80,38 +110,62 @@ export default{
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          refToken: refreshToken
+          refreshToken: refToken
         })
       }
-      const resData = await getJSON('http://localhost:3000/auth/refresh', options);
+      const resData = await getJSON(`${config.BASE_URL}/auth/refresh`, options);
 
       const {token, refreshToken, userId} = resData;
+      let expiresIn = resData.expiresIn*1000
+      const expirationDate = new Date().getTime() + expiresIn;
+      
       const userPayload = {
-        token: token,
-        refreshToken: refreshToken,
-        userId: userId
+        name: context.getters.getName,
+        token,
+        refreshToken,
+        userId,
+        expirationDate
       }
-        
-      localStorage.setItem('token', token)
-      localStorage.setItem('refreshToken', refreshToken)
-      localStorage.setItem('userId', userId)
+      
       context.commit('setUserData', userPayload)
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('userId', userId);
+      localStorage.setItem('expiresIn', expirationDate);
+
+      timer = setTimeout(function(){
+        context.dispatch('refreshAuth');
+      }, expiresIn)
+
     }catch (error){
-      if(error.status === 401){
-        context.dispatch('logout')
-        router.replace('/auth')
-      }
+      context.dispatch('autoLogout')
+      throw new Error('Unauthorized')
     }
   },
-  tryLogin(context){
+
+  tryLogin: (context) =>{
+    const name = localStorage.getItem('name')
     const token = localStorage.getItem('token')
     const refreshToken = localStorage.getItem('refreshToken')
     const userId = localStorage.getItem('userId')
-    if(token.length > 0 && refreshToken.length > 0 && userId.length > 0){
+    let expiresIn = localStorage.getItem('expiresIn')
+
+    expiresIn = +expiresIn - new Date().getTime()
+    if(expiresIn < 0){
+      return;
+    }
+
+    timer = setTimeout(function(){
+      context.dispatch('refreshAuth');
+    }, expiresIn)
+
+    if(token.length > 0 && refreshToken.length > 0 && userId.length > 0 && name !== ''){
       const userPayload = {
+        name,
         token,
         refreshToken,
-        userId
+        userId,
+        expiresIn
       }
       context.commit('setUserData', userPayload)
     }else{
@@ -120,11 +174,21 @@ export default{
       throw new Error('Unauthorized')
     }
   },
-  logout(context){
+
+  logout: (context) => {
     context.commit('logout')
+    localStorage.removeItem('name')
     localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('userId')
+    localStorage.removeItem('expiresIn');
+    clearTimeout(timer);
+    router.replace('/auth')
+  },
+
+  autoLogout(context){
+    context.dispatch('logout');
+    context.commit('setAutoLogout');
   },
 
 
@@ -132,7 +196,7 @@ export default{
   // Chat section
   findUser: async (context, payload) => {
     this.state.response = {
-      data: await getJSON('http://localhost:3000/addContact', payload),
+      data: await getJSON(`${config.BASE_URL}addContact`, payload),
       context
     };
   },

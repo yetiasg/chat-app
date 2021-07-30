@@ -11,6 +11,13 @@ export default{
   isAuthenticated(state){
       return state.isAuth
   },
+  getName(state){
+    return state.name
+  },
+
+  getTokenExpiration(state){
+    return state.expiresIn
+  },
 
   // Chat section
   getUsersList: (state) => {

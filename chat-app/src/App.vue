@@ -2,6 +2,14 @@
   <router-view></router-view>
 </template>
 
+<script>
+export default {
+  mounted(){
+    this.$store.dispatch('tryLogin')
+  }
+}
+</script>
+
 <style>
 * {
   margin: 0;

@@ -6,7 +6,7 @@ const signAccessToken = (userId) => {
   return new Promise((resolve, reject) => {
     const payload = { userId };
     const secret = config.ACCESS_TOKEN_SECRET;
-    const options = { expiresIn: config.TOKEN_EXPIRATION };
+    const options = { expiresIn: `20s` };
     JWT.sign(payload, secret, options, (err, token) => {
       if (err) return reject(createError.InternalServerError());
       resolve(token);
@@ -42,7 +42,6 @@ const signRefreshToken = (userId) => {
 
 const verifyRefreshToken = (refreshToken) => {
   return new Promise((resolve, reject) => {
-    if(refreshToken.length<1) return reject(createError.Unauthorized());
     JWT.verify(refreshToken, config.REFRESH_TOKEN_SECRET, (err, payload) => {
       if (err){
         const message = err.name === 'JsonWebTokenError' ? 'Unauthorized' : err.message;

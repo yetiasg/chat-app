@@ -16,7 +16,7 @@ exports.login = async (req, res, next) => {
     if(!doMatch) throw createError.Unauthorized('Username/password not valid');
     const token = await signAccessToken(user._id);
     const refreshToken = await signRefreshToken(user._id);
-    res.status(200).json({token, refreshToken, userId: user._id, expiresIn: config.TOKEN_EXPIRATION});
+    res.status(200).json({token, refreshToken, userId: user._id, name:`${user.firstName} ${user.lastName}` ,expiresIn: config.TOKEN_EXPIRATION});
   }catch (error){
     next(error);
   }
@@ -34,7 +34,7 @@ exports.register = async (req, res, next) => {
     let userId = newUser.insertedId;
     const token = await signAccessToken(userId);
     const refreshToken = await signRefreshToken(userId);
-    res.status(200).json({token, refreshToken, userId, expiresIn: config.TOKEN_EXPIRATION});
+    res.status(200).json({token, refreshToken, userId, name:`${user.firstName} ${user.lastName}`, expiresIn: config.TOKEN_EXPIRATION});
   }catch (error){
     if(error.isJoi === true) error.status = 422;
     next(error);
@@ -44,7 +44,7 @@ exports.register = async (req, res, next) => {
 exports.refresh = async (req, res, next) => {
   try{
     let {refreshToken} = req.body;
-    const userId = await verifyRefreshToken(refToken);
+    const userId = await verifyRefreshToken(refreshToken);
     const token = await signAccessToken(userId);
     refreshToken = await signRefreshToken(userId);
     res.status(200).json({token, refreshToken, userId, expiresIn: config.TOKEN_EXPIRATION});
