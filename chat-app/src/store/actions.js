@@ -22,15 +22,15 @@ export default{
       }
       const resData = await getJSON('http://localhost:3000/auth/login', options)
 
-      const {token, refToken, userId} = resData;
+      const {token, refreshToken, userId} = resData;
       const userPayload = {
         token: token,
-        refreshToken: refToken,
+        refreshToken: refreshToken,
         userId: userId
       }
       context.commit('setUserData', userPayload)
       localStorage.setItem('token', token);
-      localStorage.setItem('refreshToken', refToken);
+      localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('userId', userId);
     }catch (error){
       console.log(error)
@@ -55,15 +55,15 @@ export default{
       }
       const resData = await getJSON('http://localhost:3000/auth/register', options);
 
-      const {token, refToken, userId} = resData;
+      const {token, refreshToken, userId} = resData;
       const userPayload = {
         token: token,
-        refreshToken: refToken,
+        refreshToken: refreshToken,
         userId: userId
       }
       context.commit('setUserData', userPayload)
       localStorage.setItem('token', token)
-      localStorage.setItem('refreshToken', refToken)
+      localStorage.setItem('refreshToken', refreshToken)
       localStorage.setItem('userId', userId)
     }catch (error){
       console.log(error.message)
@@ -85,15 +85,15 @@ export default{
       }
       const resData = await getJSON('http://localhost:3000/auth/refresh', options);
 
-      const {token, refToken, userId} = resData;
+      const {token, refreshToken, userId} = resData;
       const userPayload = {
         token: token,
-        refreshToken: refToken,
+        refreshToken: refreshToken,
         userId: userId
       }
         
       localStorage.setItem('token', token)
-      localStorage.setItem('refreshToken', refToken)
+      localStorage.setItem('refreshToken', refreshToken)
       localStorage.setItem('userId', userId)
       context.commit('setUserData', userPayload)
     }catch (error){

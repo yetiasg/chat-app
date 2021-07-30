@@ -1,6 +1,6 @@
 const createError = require('http-errors');
 const JWT = require('jsonwebtoken');
-const config = require('../config.json');
+const config = require('../config');
 
 const signAccessToken = (userId) => {
   return new Promise((resolve, reject) => {
@@ -14,14 +14,13 @@ const signAccessToken = (userId) => {
   });
 };
 
-const verifyAccessToken = (reg, res, next) => {
+const verifyAccessToken = (req, res, next) => {
   if (!req.headers['authorization']) return next(createError.Unauthorized());
   const token = req.headers['authorization'].split(' ')[1];
   if (!token) return next(createError.Unauthorized());
   JWT.verify(token, config.ACCESS_TOKEN_SECRET, (err, payload) => {
     if (err) {
-      const message =
-        err.name === 'JsonWebTokenError' ? 'Unauthorized' : err.message;
+      const message = err.name === 'JsonWebTokenError' ? 'Unauthorized' : err.message;
       return next(createError.Unauthorized(message));
     }
     req.payload = payload;
@@ -43,9 +42,13 @@ const signRefreshToken = (userId) => {
 
 const verifyRefreshToken = (refreshToken) => {
   return new Promise((resolve, reject) => {
+    if(refreshToken.length<1) return reject(createError.Unauthorized());
     JWT.verify(refreshToken, config.REFRESH_TOKEN_SECRET, (err, payload) => {
-      if (err) return reject(createError.Unauthorized());
-      resolve( userId = payload.userId);
+      if (err){
+        const message = err.name === 'JsonWebTokenError' ? 'Unauthorized' : err.message;
+        return reject(createError.Unauthorized(message));
+      }
+      resolve(userId = payload.userId);
     });
   });
 };

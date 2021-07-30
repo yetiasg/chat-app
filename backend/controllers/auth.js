@@ -3,7 +3,7 @@ const { getDB } = require('../helpers/db-connection');
 const { loginSchema, registerSchema } = require('../helpers/validation');
 const { hashPassword, comparePassword } = require('../helpers/bcrypt_helper');
 const { signAccessToken, signRefreshToken, verifyRefreshToken} = require('../helpers/jwt_helpers');
-const config = require('../config.json');
+const config = require('../config');
 
 exports.login = async (req, res, next) => {
   try{
@@ -43,11 +43,11 @@ exports.register = async (req, res, next) => {
 
 exports.refresh = async (req, res, next) => {
   try{
-    const {refToken} = req.body;
+    let {refreshToken} = req.body;
     const userId = await verifyRefreshToken(refToken);
     const token = await signAccessToken(userId);
-    const refreshToken = await signRefreshToken(userId);
-    res.status(200).json({token, refToken: refreshToken, userId, expiresIn: config.TOKEN_EXPIRATION});
+    refreshToken = await signRefreshToken(userId);
+    res.status(200).json({token, refreshToken, userId, expiresIn: config.TOKEN_EXPIRATION});
   }catch (error){
     next(error);
   }

@@ -1,7 +1,7 @@
 const createError = require('http-errors');
 const morgan = require('morgan');
 const express = require('express');
-const config = require('./config.json');
+const config = require('./config');
 
 const { initDB } = require('./helpers/db-connection');
 const authRoutes = require('./router/auth');
