@@ -31,7 +31,7 @@ exports.getMessagesById = async(req, res, next) =>{
     const db = await getDB();
     const conversationsCol = await db.collection('conversations');
     const [result] = await conversationsCol.find({"_id": new ObjectId(id)}).toArray();
-    // if(!result) throw createError.InternalServerError();
+    if(!result) throw createError.NotFound("You do not have any messages on this conversation");
     res.status(200).json(result.messages)
   }catch(error){
     next(error);
@@ -53,15 +53,13 @@ exports.saveNewMessage = async(req, res, next) =>{
 }
 
 exports.addNewContact = async (req, res, next) => {
-  const {email, userId, userName} = req.body; //yetiasg //iwoId  //Iwo Dindas
-  
+  const {email, userId, userName} = req.body;
   try{
     // Find if email exists in DB
     const db = await getDB();
     const usersCol = await db.collection('users');
     const {_id, firstName, lastName} = await usersCol.findOne({email: email}, {projection: {_id: 1, firstName: 1, lastName: 1}}); 
     if(!_id) throw createError.BadRequest();  
-
 
     // Check if the user is trying to add himself and check if users have existing conversation
     if(_id.toString() === userId.toString()) throw createError.BadRequest(); 
@@ -70,19 +68,16 @@ exports.addNewContact = async (req, res, next) => {
       if(conv.user.userId.toString() === _id.toString()) throw createError.BadRequest();      
     });
 
-
     // Store new user data do create new conversation
     const userToAdd = {
       userId: _id, 
       userName: `${firstName} ${lastName}` 
     }
 
-
     // Create new convercation and fetch new ID
     const conversationsCol = await db.collection('conversations');
     const {insertedId} = await conversationsCol.insertOne({_id: new ObjectId(), lastMessage: '', messages: [], owners: [new ObjectId(userId), userToAdd.userId]});  
     if(!insertedId) throw createError.InternalServerError(); 
-
 
     //Add conversation ID to first user
     const result = await usersCol.updateOne(
@@ -96,7 +91,6 @@ exports.addNewContact = async (req, res, next) => {
       );
     if(!result) throw createError.InternalServerError();
 
-
     // //Add conversation ID to second user
     const result1 = await usersCol.updateOne(
       {_id: userToAdd.userId},
@@ -108,7 +102,6 @@ exports.addNewContact = async (req, res, next) => {
         }
       );
     if(!result1) throw createError.InternalServerError();
-
 
     res.status(200).json({emailExists: true});
   }catch (error){

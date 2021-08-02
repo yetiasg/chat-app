@@ -1,5 +1,7 @@
 import router from '../router.js';
 import config from '../config.js'
+import {io} from 'socket.io-client'
+const socket = io("http://localhost:3000");
 
 const getJSON = async (url, options) => {
   const response = await fetch(url, options);
@@ -239,24 +241,32 @@ export default{
     }
   },
 // --------------------------------------------------
-
   sendMessage: async(context, payload) =>{
     try{
-      const {message, userId, date} = payload;
-      const token = context.getters.getToken;
-  
-      const resData = await getJSON(`${config.BASE_URL}/saveNewMessage`, {
-        method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-      })
+      // const {message, userId, date} = payload;
+      // const token = context.getters.getToken;
 
-      console.log(resData)
+      socket.emit("private chat", payload);
+      
+
+      socket.on("private chat", socket.id, data =>{
+        console.log(data)
+       context.state.currentMessages = [...context.state.currentMessages, data];
+        data = null;
+       })
+        // context.commit('sendMessage', data)
+
+
   
-      context.commit('sendMessage', {message, userId, date})
+      // await getJSON(`${config.BASE_URL}/saveNewMessage`, {
+      //   method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json',
+      //       'Authorization': `Bearer ${token}`
+      //     },
+      //     body: JSON.stringify(payload)
+      // })
+  
     }catch(error){
       console.log(error);
     }

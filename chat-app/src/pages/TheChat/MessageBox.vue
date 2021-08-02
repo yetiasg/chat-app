@@ -22,7 +22,7 @@
           v-model="message"
           placeholder="Type some message"/>
         </form>
-        <base-button mode="submitMessage" @click="sendMessage"
+        <base-button :disabled="!getSelectedConversationId" mode="submitMessage" @click="sendMessage"
           >Send</base-button
         >
       </div>
@@ -157,7 +157,7 @@ form{
 }
 
 .output .select{
-  color: #3f3f3f;
+  color: #646464;
   font-size: 14px;
 }
 
