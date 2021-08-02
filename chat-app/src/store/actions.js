@@ -3,10 +3,9 @@ import config from '../config.js'
 
 const getJSON = async (url, options) => {
   const response = await fetch(url, options);
-  if (!response.ok) throw new Error('Not registered or nvalid data');
+  if (!response.ok) throw new Error(response.message);
   const data = await response.json();
   return data;
-
 };
 
 let timer;
@@ -52,7 +51,7 @@ export default{
       }, expiresIn);
 
     }catch (error){
-      router.replace('/auth')
+      console.log(error.message)
     }
   },
 
@@ -73,6 +72,8 @@ export default{
           repeatPassword: repeatPassword
         })
       });
+
+      
 
       const {token, refreshToken, userId, name} = resData;
       let expiresIn = resData.expiresIn*1000*60*60;
@@ -100,7 +101,7 @@ export default{
       }, expiresIn);
 
     }catch (error){
-      router.replace('/auth');
+      console.log("Can not register now")
     }
   },
 
@@ -217,7 +218,7 @@ export default{
       });
       context.commit('saveConversations', resData);
     }catch(error){
-      console.log(error);
+      console.log("You have no conversations");
     }
   },
 

@@ -5,6 +5,7 @@
         <p>{{getConversationData.userName}}</p>
       </div>
       <div class="output">
+        <p class="select" v-if="!getSelectedConversationId">Choose conversation and send message</p>
         <ul>
           <li v-for="msg of getMessages" :key="msg.date" :class="msg.userId === getUserId ? 'right' : 'left'">
             <p>{{msg.message}}</p>
@@ -14,6 +15,7 @@
       <div class="messageInput">
         <form @submit.prevent>
           <input
+          :disabled="!getSelectedConversationId"
           type="text"
           name="message"
           autocomplete="off"
@@ -64,7 +66,12 @@ export default {
     },
     getMessages(){
       return this.$store.getters.getCurrentMessages
+    },
+
+    getSelectedConversationId(){
+      return this.$store.getters.getSelectedConversationId
     }
+
   }
   
 
@@ -147,6 +154,11 @@ form{
   justify-content: center;
   align-items: flex-end;
   padding: 1rem;  
+}
+
+.output .select{
+  color: #3f3f3f;
+  font-size: 14px;
 }
 
 ul{

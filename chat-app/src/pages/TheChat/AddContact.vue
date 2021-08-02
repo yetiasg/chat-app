@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>Add new contact</p>
-    <p class="notExists" v-if="!emailExists">Email does not exist in database</p>
+    <p class="notExists" v-if="!emailExists">Can not add yourself or email does not exist in database</p>
     <form @submit.prevent>
       <input
         type="email"
@@ -66,6 +66,7 @@ div > p {
 }
 
 .notExists{
-  color: red;
+  color: rgb(240, 48, 48);
+  font-size: 12px;
 }
 </style>
