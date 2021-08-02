@@ -35,5 +35,9 @@ export default{
 
   getCurrentMessages(state){
     return state.currentMessages;
+  },
+
+  emailExists(state){
+    return state.emailExists;
   }
 }

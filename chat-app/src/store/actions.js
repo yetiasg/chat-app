@@ -181,6 +181,7 @@ export default{
 
   logout: (context) => {
     context.commit('logout');
+    context.commit('clearMessages');
     localStorage.removeItem('name');
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
@@ -197,13 +198,7 @@ export default{
 
 
 
-  // Chat section
-  // findUser: async (context, payload) => {
-  //   this.state.response = {
-  //     data: await getJSON(`${config.BASE_URL}/addContact`, payload),
-  //     context
-  //   };
-  // },
+// Chat section
 
   selectedConversationId(context, payload){
     context.commit('selectedConversationId', payload);
@@ -241,6 +236,53 @@ export default{
     }catch(error){
       console.log(error);
     }
-  }
+  },
+// --------------------------------------------------
+
+  sendMessage: async(context, payload) =>{
+    try{
+      const {message, userId, date} = payload;
+      const token = context.getters.getToken;
+  
+      const resData = await getJSON(`${config.BASE_URL}/saveNewMessage`, {
+        method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+      })
+
+      console.log(resData)
+  
+      context.commit('sendMessage', {message, userId, date})
+    }catch(error){
+      console.log(error);
+    }
+  },
+
+// --------------------------------------------------
+
+  findUser: async (context, payload) => {
+    
+    try{
+      const {email} = payload
+      const userId = context.getters.getUserId;
+      const token = context.getters.getToken;
+
+      const resData = await getJSON(`${config.BASE_URL}/addNewContact`, {
+        method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({email, userId, userName: context.getters.getName})
+      })
+      console.log(resData)
+      context.commit('emailExists', resData.emailExists)
+    }catch(error){
+      console.log(error);
+    }
+  },
 }
 

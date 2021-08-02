@@ -6,6 +6,8 @@ router.get('/conversations/:userId', verifyAccessToken, chatController.getConver
 
 router.get('/messagesById/:id', verifyAccessToken, chatController.getMessagesById);
 
+router.post('/saveNewMessage', verifyAccessToken, chatController.saveNewMessage);
 
+router.post('/addNewContact',  chatController.addNewContact);
 
 module.exports = router;

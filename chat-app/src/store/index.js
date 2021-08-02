@@ -17,7 +17,9 @@ const store = createStore({
       didAutoLogout: false,
       
       conversations: [],
-      currentMessages: []
+      currentMessages: [],
+
+      emailExists: true
     };
   },
   mutations,

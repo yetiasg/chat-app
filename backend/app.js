@@ -1,4 +1,5 @@
 const createError = require('http-errors');
+const cors = require('cors');
 const morgan = require('morgan');
 const express = require('express');
 const config = require('./config');
@@ -10,6 +11,7 @@ const chatRoutes = require('./router/chat');
 // const helmet = require('helmet');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 // app.use(helmet());

@@ -35,6 +35,15 @@ export default{
   },
 
   clearMessages(state){
-    state.currentMessages = ''
+    state.currentMessages = [],
+    state.conversations = []
+  },
+
+  sendMessage(state, payload){
+    state.currentMessages.push(payload)
+  },
+
+  emailExists(state, payload){
+    state.emailExists = payload;
   }
 }

@@ -1,6 +1,7 @@
 <template>
   <div>
     <p>Add new contact</p>
+    <p class="notExists" v-if="!emailExists">Email does not exist in database</p>
     <form @submit.prevent>
       <input
         type="email"
@@ -8,7 +9,7 @@
         placeholder="type an email"
         v-model.trim="email"
       />
-      <base-button mode="addToContactBtn" @click="findUser">Find</base-button>
+      <base-button mode="addToContactBtn" @click="findUser">Add</base-button>
     </form>
   </div>
 </template>
@@ -26,6 +27,11 @@ export default {
       this.$store.dispatch('findUser', { email: this.email });
     },
   },
+  computed: {
+    emailExists(){
+      return this.$store.getters.emailExists;
+    }
+  }
 };
 </script>
 
@@ -57,5 +63,9 @@ div > p {
   margin: 0.7rem 0 0.5rem 0.2rem;
   font-size: 14px;
   color: hsl(0, 0%, 55%);
+}
+
+.notExists{
+  color: red;
 }
 </style>
