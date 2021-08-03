@@ -1,16 +1,20 @@
 export default{
+
   // Auth section
   getUserId(state){
     if(!state.userId || !state.token || !state.refreshToken) return state.userId
     else return state.userId
   },
+
   getToken(state){
-      if(!state.userId || !state.token || !state.refreshToken) return null
-      else return state.token
+    if(!state.userId || !state.token || !state.refreshToken) return null
+    else return state.token
   },
+
   isAuthenticated(state){
-      return state.isAuth
+    return state.isAuth
   },
+
   getName(state){
     return state.name
   },
@@ -18,6 +22,7 @@ export default{
   getTokenExpiration(state){
     return state.expiresIn
   },
+
 
   // Chat section
   getUsersList: (state) => {

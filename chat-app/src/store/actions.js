@@ -9,6 +9,10 @@ const getJSON = async (url, options) => {
   return data;
 };
 
+const expirationTime = (time) => {
+  return time * 1000 * 60 * 60;
+}
+
 
 let timer;
 
@@ -28,7 +32,7 @@ export default{
         })
       });
       const {token, refreshToken, userId, name} = resData;
-      let expiresIn = resData.expiresIn*1000*60*60;
+      let expiresIn = expirationTime(resData.expiresIn);
       const expirationDate = new Date().getTime() + expiresIn;
 
       const userPayload = {
@@ -78,7 +82,7 @@ export default{
       
 
       const {token, refreshToken, userId, name} = resData;
-      let expiresIn = resData.expiresIn*1000*60*60;
+      let expiresIn = expirationTime(resData.expiresIn);
       const expirationDate = new Date().getTime() + expiresIn;
 
       const userPayload = {
@@ -123,7 +127,7 @@ export default{
       });
 
       const {token, refreshToken, userId} = resData;
-      let expiresIn = resData.expiresIn*1000*60*60;
+      let expiresIn = expirationTime(resData.expiresIn);
       const expirationDate = new Date().getTime() + expiresIn;
       
       const userPayload = {

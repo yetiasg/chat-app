@@ -21,6 +21,7 @@ export default{
     state.didAutoLogout = true;
   },
 
+  
   // Chat section
   selectedConversationId(state, payload){
     state.selectedConversationId = payload;
