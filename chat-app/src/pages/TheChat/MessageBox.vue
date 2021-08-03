@@ -42,9 +42,9 @@ export default {
   },
 
   created(){
-    
     socket.on("message", content => {
       if(content.conversationId !== this.$store.getters.getSelectedConversationId) return
+      console.log(content)
       this.$store.dispatch("saveReceivedMessage", content)
     })
   },
@@ -78,10 +78,7 @@ export default {
     getSelectedConversationId(){
       return this.$store.getters.getSelectedConversationId
     }
-
   }
-  
-
 };
 
 

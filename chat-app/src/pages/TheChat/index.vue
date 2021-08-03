@@ -8,16 +8,11 @@
 <script>
 import ContactBox from './ContactBox.vue';
 import MessageBox from './MessageBox.vue';
-import socket from '../../socket.js'
 
 export default {
   components: {
     ContactBox,
     MessageBox,
-  },
-  mounted(){
-    const userId = this.$store.getters.getUserId
-    socket.emit("join server", userId);
   }
 };
 </script>

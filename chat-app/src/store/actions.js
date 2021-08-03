@@ -213,8 +213,6 @@ export default{
       const userId = context.getters.getUserId;
       const token = context.getters.getToken;
 
-      socket.emit("join server", userId);
-
       const resData = await getJSON(`${config.BASE_URL}/conversations/${userId}`, {
         method: 'GET',
         headers: {
@@ -244,7 +242,7 @@ export default{
       console.log(error);
     }
   },
-// --------------------------------------------------
+
   saveReceivedMessage: (context, payload) => {
     context.commit('sendMessage', payload)
   },
@@ -253,27 +251,22 @@ export default{
     try{
       socket.emit("message", payload);
 
-
-      // const token = context.getters.getToken;
-
-      // await getJSON(`${config.BASE_URL}/saveNewMessage`, {
-      //   method: 'POST',
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //       'Authorization': `Bearer ${token}`
-      //     },
-      //     body: JSON.stringify(payload)
-      // })
-  
+      const token = context.getters.getToken;
+      await getJSON(`${config.BASE_URL}/saveNewMessage`, {
+        method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+      })
     }catch(error){
       console.log(error);
     }
   },
 
-// --------------------------------------------------
 
   findUser: async (context, payload) => {
-    
     try{
       const {email} = payload
       const userId = context.getters.getUserId;
@@ -287,8 +280,8 @@ export default{
           },
           body: JSON.stringify({email, userId, userName: context.getters.getName})
       })
-      console.log(resData)
-      context.commit('emailExists', resData.emailExists)
+      context.dispatch('getConversationsList');
+      context.commit('emailExists', resData.emailExists);
     }catch(error){
       console.log(error);
     }

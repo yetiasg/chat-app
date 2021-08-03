@@ -3,18 +3,18 @@ const cors = require('cors');
 const morgan = require('morgan');
 const express = require('express');
 const config = require('./config');
+const helmet = require('helmet');
 const {createServer} = require('http');
 
 const { initDB } = require('./helpers/db-connection');
 const authRoutes = require('./router/auth');
 const chatRoutes = require('./router/chat');
 
-// const helmet = require('helmet');
 const app = express();
+app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
-// app.use(helmet());
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,22 +25,10 @@ app.use((req, res, next) => {
 
 
 const server = createServer(app);
-const io = require('socket.io')(server, {
-  cors:{
-    origin: "*"
-  }
-});
-
-
-let users = [];
+const io = require('socket.io')(server, { cors:{ origin: "*" }});
 
 
 io.on("connection", socket =>{
-
-  socket.once("join server", (userId) => {
-    console.log(userId);
-    users.push(userId);
-  });
 
   socket.on("join room", selectedConvId => {
     socket.join(selectedConvId);
@@ -48,11 +36,10 @@ io.on("connection", socket =>{
   });
 
   socket.on("message", content => {
-    io.to(content.userId).emit("message", content);
+    console.log(content)
+    io.to(content.conversationId).emit("message", content);
   });
 });
-
-
 
 app.use('/auth', authRoutes);
 app.use(chatRoutes);
