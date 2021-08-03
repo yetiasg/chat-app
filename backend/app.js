@@ -31,21 +31,27 @@ const io = require('socket.io')(server, {
   }
 });
 
+
+let users = [];
+
+
 io.on("connection", socket =>{
-  socket.on("private chat", ({content, to}) => {
-    socket.to(to).emit("private chat",{
-      content,
-      from: socket.id
-    });
+
+  socket.once("join server", (userId) => {
+    console.log(userId);
+    users.push(userId);
   });
-  // socket.on("chat", payload => {
-    
-  //   io.emit("chat", payload);
-  //   console.log(payload)
 
-  // })
+  socket.on("join room", selectedConvId => {
+    socket.join(selectedConvId);
+    io.to(selectedConvId).emit("selected conversation", selectedConvId);
+  });
 
+  socket.on("message", content => {
+    io.to(content.userId).emit("message", content);
+  });
 });
+
 
 
 app.use('/auth', authRoutes);

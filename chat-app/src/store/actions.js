@@ -1,7 +1,6 @@
 import router from '../router.js';
 import config from '../config.js'
-import {io} from 'socket.io-client'
-const socket = io("http://localhost:3000");
+import socket from '../socket.js'
 
 const getJSON = async (url, options) => {
   const response = await fetch(url, options);
@@ -9,6 +8,7 @@ const getJSON = async (url, options) => {
   const data = await response.json();
   return data;
 };
+
 
 let timer;
 
@@ -204,6 +204,7 @@ export default{
 // Chat section
 
   selectedConversationId(context, payload){
+    socket.emit("join room", payload);
     context.commit('selectedConversationId', payload);
   },
 
@@ -211,6 +212,9 @@ export default{
     try{
       const userId = context.getters.getUserId;
       const token = context.getters.getToken;
+
+      socket.emit("join server", userId);
+
       const resData = await getJSON(`${config.BASE_URL}/conversations/${userId}`, {
         method: 'GET',
         headers: {
@@ -241,23 +245,17 @@ export default{
     }
   },
 // --------------------------------------------------
+  saveReceivedMessage: (context, payload) => {
+    context.commit('sendMessage', payload)
+  },
+
   sendMessage: async(context, payload) =>{
     try{
-      // const {message, userId, date} = payload;
+      socket.emit("message", payload);
+
+
       // const token = context.getters.getToken;
 
-      socket.emit("private chat", payload);
-      
-
-      socket.on("private chat", socket.id, data =>{
-        console.log(data)
-       context.state.currentMessages = [...context.state.currentMessages, data];
-        data = null;
-       })
-        // context.commit('sendMessage', data)
-
-
-  
       // await getJSON(`${config.BASE_URL}/saveNewMessage`, {
       //   method: 'POST',
       //     headers: {

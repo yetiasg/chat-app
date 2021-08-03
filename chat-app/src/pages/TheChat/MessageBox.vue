@@ -13,7 +13,7 @@
         </ul>
       </div>
       <div class="messageInput">
-        <form @submit.prevent>
+        <form @submit.prevent @keydown.enter="sendMessage">
           <input
           :disabled="!getSelectedConversationId"
           type="text"
@@ -22,15 +22,14 @@
           v-model="message"
           placeholder="Type some message"/>
         </form>
-        <base-button :disabled="!getSelectedConversationId" mode="submitMessage" @click="sendMessage"
-          >Send</base-button
-        >
+        <base-button :disabled="!getSelectedConversationId" mode="submitMessage" @click="sendMessage">Send</base-button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import socket from '../../socket.js'
 export default {
   data() {
     return {
@@ -40,6 +39,14 @@ export default {
 
   updated(){
     this.$nextTick(() => this.scrollToEnd());
+  },
+
+  created(){
+    
+    socket.on("message", content => {
+      if(content.conversationId !== this.$store.getters.getSelectedConversationId) return
+      this.$store.dispatch("saveReceivedMessage", content)
+    })
   },
 
   methods: {
