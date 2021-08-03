@@ -23,10 +23,8 @@ app.use((req, res, next) => {
   next();
 });
 
-
 const server = createServer(app);
 const io = require('socket.io')(server, { cors:{ origin: "*" }});
-
 
 io.on("connection", socket =>{
 

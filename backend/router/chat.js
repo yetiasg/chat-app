@@ -8,6 +8,6 @@ router.get('/messagesById/:id', verifyAccessToken, chatController.getMessagesByI
 
 router.post('/saveNewMessage', verifyAccessToken, chatController.saveNewMessage);
 
-router.post('/addNewContact',  chatController.addNewContact);
+router.post('/addNewContact', verifyAccessToken, chatController.addNewContact);
 
 module.exports = router;
