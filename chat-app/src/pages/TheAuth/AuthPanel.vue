@@ -101,7 +101,7 @@ export default {
       return this.loginMode ? 'Zaloguj' : 'Zarejestruj';
     },
     isLoggedIn() {
-      return this.$store.getters.isAuthenticated;
+      return this.$store.state.isAuth;
     },
   },
 };

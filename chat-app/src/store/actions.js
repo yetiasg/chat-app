@@ -2,6 +2,8 @@ import router from '../router.js';
 import config from '../config.js'
 import socket from '../socket.js'
 
+
+// helpers----------------------------------------------
 const getJSON = async (url, options) => {
   const response = await fetch(url, options);
   if (!response.ok) throw new Error(response.message);
@@ -12,7 +14,7 @@ const getJSON = async (url, options) => {
 const expirationTime = (time) => {
   return time * 1000 * 60 * 60;
 }
-
+//------------------------------------------------------
 
 let timer;
 
@@ -79,8 +81,6 @@ export default{
         })
       });
 
-      
-
       const {token, refreshToken, userId, name} = resData;
       let expiresIn = expirationTime(resData.expiresIn);
       const expirationDate = new Date().getTime() + expiresIn;
@@ -131,7 +131,7 @@ export default{
       const expirationDate = new Date().getTime() + expiresIn;
       
       const userPayload = {
-        name: context.getters.getName,
+        name: context.state.name,
         token,
         refreshToken,
         userId,
@@ -204,7 +204,6 @@ export default{
   },
 
 
-
 // Chat section
 
   selectedConversationId(context, payload){
@@ -214,8 +213,9 @@ export default{
 
   getConversationsList: async(context) => {
     try{
-      const userId = context.getters.getUserId;
-      const token = context.getters.getToken;
+      const userId = context.state.userId;
+      const token = context.state.token;
+
 
       const resData = await getJSON(`${config.BASE_URL}/conversations/${userId}`, {
         method: 'GET',
@@ -232,7 +232,7 @@ export default{
 
   getMessagesById: async(context, payload) =>{
     try{
-      const token = context.getters.getToken;
+      const token = context.state.token;
       const id = payload; 
       const resData = await getJSON(`${config.BASE_URL}/messagesById/${id}`, {
         method: 'GET',
@@ -255,7 +255,7 @@ export default{
     try{
       socket.emit("message", payload);
 
-      const token = context.getters.getToken;
+      const token = context.state.token;
       await getJSON(`${config.BASE_URL}/saveNewMessage`, {
         method: 'POST',
           headers: {
@@ -269,12 +269,11 @@ export default{
     }
   },
 
-
   findUser: async (context, payload) => {
     try{
       const {email} = payload
-      const userId = context.getters.getUserId;
-      const token = context.getters.getToken;
+      const userId = context.state.userId;
+      const token = context.state.token;
 
       const resData = await getJSON(`${config.BASE_URL}/addNewContact`, {
         method: 'POST',
@@ -282,7 +281,7 @@ export default{
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({email, userId, userName: context.getters.getName})
+          body: JSON.stringify({email, userId, userName: context.state.name})
       })
       context.dispatch('getConversationsList');
       context.commit('emailExists', resData.emailExists);

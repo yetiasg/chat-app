@@ -30,7 +30,7 @@ export default {
   },
   computed: {
     emailExists(){
-      return this.$store.getters.emailExists;
+      return this.$store.state.emailExists;
     }
   }
 };

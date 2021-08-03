@@ -43,8 +43,7 @@ export default {
 
   created(){
     socket.on("message", content => {
-      if(content.conversationId !== this.$store.getters.getSelectedConversationId) return
-      console.log(content)
+      if(content.conversationId !== this.getSelectedConversationId) return
       this.$store.dispatch("saveReceivedMessage", content)
     })
   },
@@ -69,14 +68,15 @@ export default {
     },
 
     getUserId(){
-      return this.$store.getters.getUserId;
+      return this.$store.state.userId;
     },
+
     getMessages(){
-      return this.$store.getters.getCurrentMessages
+      return this.$store.state.currentMessages
     },
 
     getSelectedConversationId(){
-      return this.$store.getters.getSelectedConversationId
+      return this.$store.state.selectedConversationId
     }
   }
 };

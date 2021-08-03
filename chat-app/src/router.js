@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import store from './store'
 
 import TheChat from './pages/TheChat';
 import TheAuth from './pages/TheAuth';
@@ -26,8 +27,10 @@ router.beforeEach((to, from, next) => {
   const routeAuthCheck = !!token;
 
   if (to.matched.some((record) => record.meta.requireAuth)) {
-    if (routeAuthCheck) next();
-    else next('/auth');
+    if (routeAuthCheck) {
+      store.commit('isAuthenticated', true);
+      next()
+    }else next('/auth');
   }
   if (to.matched.some((record) => record.meta.requireUnAuth)) {
     if (routeAuthCheck) next('/');

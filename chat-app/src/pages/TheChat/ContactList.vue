@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     getConversationsList() {
-      return this.$store.getters.getUsersList;
+      return this.$store.state.conversations;
     },
   
   },

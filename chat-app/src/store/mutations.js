@@ -21,7 +21,10 @@ export default{
     state.didAutoLogout = true;
   },
 
-  
+  isAuthenticated(state, payload){
+    state.isAuth = payload
+  },
+
   // Chat section
   selectedConversationId(state, payload){
     state.selectedConversationId = payload;

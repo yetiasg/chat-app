@@ -32,7 +32,7 @@ export default {
   },
   computed: {
     getUserName(){
-      return this.$store.getters.getName;
+      return this.$store.state.name;
     }
   }
 };
