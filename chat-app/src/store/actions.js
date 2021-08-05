@@ -198,7 +198,7 @@ export default{
     router.replace('/auth');
   },
 
-  autoLogout(context){
+  autoLogout: (context) => {
     context.dispatch('logout');
     context.commit('setAutoLogout');
   },
